@@ -8,3 +8,10 @@ def test_get_auth_from_env():
     auth = get_monte_carlo_auth_from_env()
     assert auth.x_mcd_id == "X_MCD_ID"
     assert auth.x_mcd_token == "X_MCD_TOKEN"
+
+
+def test_get_auth_headers():
+    auth = get_monte_carlo_auth_from_env()
+    headers = auth.auth_headers
+    assert headers["x-mcd-id"] == "X_MCD_ID"
+    assert headers["x-mcd-token"] == "X_MCD_TOKEN"
