@@ -2,7 +2,7 @@
 name = "mc_monitor_helper_package"
 version = "0.1.0"
 description = ""
-authors = ["robert.offner <robert.offner@kolibrigames.com>"]
+authors = ["Gitznik <r.offner@gmx.de>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -11,6 +11,7 @@ python = "^3.9"
 pytest = "^5.2"
 pylint = "^2.12.2"
 black = {version = "^21.12b0", allow-prereleases = true}
+python-dotenv = "^0.19.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
