@@ -40,6 +40,12 @@ class MonteCarloTableContext:
     timefields: Dict
     mcon: str
 
+    def evaluate_if_monitorable(self, timefield: str) -> bool:
+        return str.lower(timefield) in self.timefields
+
+    def __repr__(self) -> str:
+        return str(self.table)
+
 
 def parse_tables(tables_to_monitor: List[str]) -> list:
     return [
