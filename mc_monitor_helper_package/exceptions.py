@@ -1,0 +1,2 @@
+class NoNewMonitorsFound(Exception):
+    pass
