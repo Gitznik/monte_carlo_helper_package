@@ -1,2 +1,6 @@
-class NoNewMonitorsFound(Exception):
+class NoNewMonitorsFoundError(Exception):
+    pass
+
+
+class DuplicateMonitorsFoundError(Exception):
     pass
