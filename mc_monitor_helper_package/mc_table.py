@@ -1,6 +1,11 @@
-from dataclasses import dataclass
-from typing import List
+from __future__ import annotations
 
+from dataclasses import dataclass
+from typing import Dict, List
+
+from mc_monitor_helper_package import queries
+from mc_monitor_helper_package.api_functions import query_mc_api
+from mc_monitor_helper_package.auth import MonteCarloAuth
 from mc_monitor_helper_package.exceptions import NoNewMonitorsFound
 
 
@@ -16,6 +21,24 @@ class MonteCarloTable:
 
     def __repr__(self) -> str:
         return self.full_table_name
+
+    def get_mc_information(
+        self, auth: MonteCarloAuth, dw_id: str
+    ) -> MonteCarloTableContext:
+        mcon, timefields = query_mc_api(
+            auth=auth,
+            executable=queries.MconsForTablesGetter(
+                full_table_id=str(self.full_table_name), dw_id=dw_id, is_timefield=True
+            ),
+        )
+        return MonteCarloTableContext(table=self, timefields=timefields, mcon=mcon)
+
+
+@dataclass
+class MonteCarloTableContext:
+    table: MonteCarloTable
+    timefields: Dict
+    mcon: str
 
 
 def parse_tables(tables_to_monitor: List[str]) -> list:
