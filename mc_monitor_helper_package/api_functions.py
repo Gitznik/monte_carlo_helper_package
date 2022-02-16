@@ -1,4 +1,4 @@
-from typing import List, Optional, Protocol, Union
+from typing import Dict, List, Optional, Protocol, Tuple, Union
 
 from gql import Client, gql
 from gql.transport.requests import RequestsHTTPTransport
@@ -17,7 +17,7 @@ class ApiExecutable(Protocol):
 def query_mc_api(
     auth: MonteCarloAuth,
     executable: ApiExecutable,
-) -> Union[dict, str, List]:
+) -> Union[Dict, str, List, Tuple]:
     transport = RequestsHTTPTransport(
         url="https://api.getmontecarlo.com/graphql",
         headers=auth.auth_headers,
