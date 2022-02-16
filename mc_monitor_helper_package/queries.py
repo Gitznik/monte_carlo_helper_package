@@ -45,6 +45,7 @@ class ExistingMonitorGetter:
             node {
                 __typename
                 id
+                uuid
                 monitorType
                 entities
                 customRuleEntities: entities
@@ -60,12 +61,17 @@ class ExistingMonitorGetter:
     def params(self) -> dict:
         return {
             "userDefinedMonitorTypes": self.user_defined_monitor_types,
+            "first": 500,
         }
 
     @staticmethod
     def parse_response(response: dict) -> List[MonteCarloTable]:
+        if response["getAllUserDefinedMonitorsV2"]["pageInfo"]["hasNextPage"]:
+            raise NotImplementedError("Pagination not implemented")
         return [
-            parse_mc_table(monitor["node"]["customRuleEntities"][0])
+            parse_mc_table(
+                monitor["node"]["customRuleEntities"][0], monitor["node"]["uuid"]
+            )
             for monitor in response["getAllUserDefinedMonitorsV2"]["edges"]
         ]
 
@@ -74,9 +80,8 @@ class ExistingMonitorGetter:
 class MconsForTablesGetter:
     full_table_id: str
     dw_id: str
-    is_timefield: str
     query: str = """
-        query getTable($dwId: UUID, $fullTableId: String, $mcon: String, $isTimeField: Boolean, $isTextField: Boolean, $isNumericField: Boolean, $cursor: String, $versions: Int = 1, $first: Int = 20) {
+        query getTable($dwId: UUID, $fullTableId: String, $mcon: String, $cursor: String, $versions: Int = 1, $first: Int = 1000) {
         getTable(dwId: $dwId, fullTableId: $fullTableId, mcon: $mcon) {
             id
             mcon
@@ -84,7 +89,7 @@ class MconsForTablesGetter:
             versions(first: $versions) {
             edges {
                 node {
-                fields(first: $first, isTimeField: $isTimeField, isTextField: $isTextField, isNumericField: $isNumericField, after: $cursor) {
+                fields(first: $first, after: $cursor) {
                     edges {
                     node {
                         name
@@ -112,7 +117,6 @@ class MconsForTablesGetter:
         return {
             "fullTableId": self.full_table_id,
             "dwId": self.dw_id,
-            "isTimeField": self.is_timefield,
         }
 
     @staticmethod
@@ -128,39 +132,84 @@ class MconsForTablesGetter:
 
 
 @dataclass
-class MonitorSetter:
-    mcon: None
-    fields: None
-    time_axis_type: None
-    time_axis_name: None
-    monitor_type: str = "stats"
+class CreateOrUpdateMonitorSetter:
+    mcon: str
+    fields: List[str]
+    time_axis_type: str
+    time_axis_name: str
+    aggregation_time_interval: str
+    lookback_days: int
+    monitor_type: str
     schedule_config: dict
+    where_contition: Optional[str] = None
+    uuid: Optional[str] = None
     query: str = """
-        mutation createMonitor($mcon: String!, $monitorType: String!, $fields: [String], $timeAxisName: String, $timeAxisType: String, $scheduleConfig: ScheduleConfigInput, $whereCondition: String) {
-        createMonitor(mcon: $mcon, monitorType: $monitorType, fields: $fields, timeAxisName: $timeAxisName, timeAxisType: $timeAxisType, scheduleConfig: $scheduleConfig, whereCondition: $whereCondition) {
-            monitor {
-            entities
-            fields
-            type
-            timeAxisFieldName
-            timeAxisFieldType
-            __typename
-            }
+    mutation createOrUpdateMonitor($mcon: String!, $monitorType: String!, $fields: [String], $timeAxisName: String, $timeAxisType: String, $scheduleConfig: ScheduleConfigInput, $uuid: UUID, $whereCondition: String, $aggTimeInterval: MonitorAggTimeInterval, $lookbackDays: Int) {
+    createOrUpdateMonitor(
+        mcon: $mcon
+        monitorType: $monitorType
+        fields: $fields
+        timeAxisName: $timeAxisName
+        timeAxisType: $timeAxisType
+        scheduleConfig: $scheduleConfig
+        uuid: $uuid
+        whereCondition: $whereCondition
+        aggTimeInterval: $aggTimeInterval
+        lookbackDays: $lookbackDays
+    ) {
+        monitor {
+        uuid
+        type
+        fields
+        entities
+        timeAxisFieldName
+        timeAxisFieldType
+        aggTimeInterval
+        aggSelectExpression
+        historyDays
+        whereCondition
+        fullTableId
+        selectExpressions {
+            id
+            expression
+            dataType
+            isRawColumnName
             __typename
         }
+        scheduleConfig {
+            scheduleType
+            intervalMinutes
+            startTime
+            minIntervalMinutes
+            __typename
         }
+        schedule {
+            resourceId
+            __typename
+        }
+        __typename
+        }
+        __typename
+    }
+    }   
     """
 
     @property
     def params(self) -> dict:
-        return {
+        params = {
+            "uuid": self.uuid,
             "mcon": self.mcon,
             "monitorType": self.monitor_type,
             "fields": self.fields,
             "timeAxisName": self.time_axis_name,
             "timeAxisType": self.time_axis_type,
+            "aggTimeInterval": str.upper(self.aggregation_time_interval),
+            "lookbackDays": self.lookback_days,
+            "whereCondition": self.where_contition,
             "scheduleConfig": self.schedule_config,
         }
+        print(params)
+        return params
 
     @staticmethod
     def parse_response(response: Dict) -> Dict:
