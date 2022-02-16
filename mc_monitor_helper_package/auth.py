@@ -17,3 +17,7 @@ def get_monte_carlo_auth_from_env():
         x_mcd_id=str(os.environ.get("X_MCD_ID")),
         x_mcd_token=str(os.environ.get("X_MCD_TOKEN")),
     )
+
+
+def get_monte_carlo_auth(x_mcd_id: str, x_mcd_token: str) -> MonteCarloAuth:
+    return MonteCarloAuth(x_mcd_id, x_mcd_token)
