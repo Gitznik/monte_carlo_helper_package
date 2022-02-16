@@ -208,7 +208,6 @@ class CreateOrUpdateMonitorSetter:
             "whereCondition": self.where_contition,
             "scheduleConfig": self.schedule_config,
         }
-        print(params)
         return params
 
     @staticmethod

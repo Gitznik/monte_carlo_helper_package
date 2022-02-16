@@ -62,7 +62,9 @@ def create_or_update_monitors(
                 time_field=time_field,
             )
             monitors_set.append(monitor)
-            print(f"Monitor created: {monitor}")
+            print(
+                f"Monitor created: {monitor['createOrUpdateMonitor']['monitor']['uuid']}"
+            )
 
     print(f"Created {len(monitors_set)} monitors")
     return monitors_set
