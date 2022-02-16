@@ -1,27 +1,28 @@
-from typing import Optional, Protocol
+from typing import List, Optional, Protocol, Union
 
 from gql import Client, gql
 from gql.transport.requests import RequestsHTTPTransport
 
-from auth import MonteCarloAuth
+from mc_monitor_helper_package.auth import MonteCarloAuth
 
 
 class ApiExecutable(Protocol):
     query: str
-    params: dict
+    params: Optional[dict] = None
 
-    def parse_response(self, response: dict) -> dict:
+    def parse_response(self, response: dict) -> Union[dict, str, List]:
         ...
 
 
 def query_mc_api(
     auth: MonteCarloAuth,
     executable: ApiExecutable,
-) -> dict:
+) -> Union[dict, str, List]:
     transport = RequestsHTTPTransport(
         url="https://api.getmontecarlo.com/graphql",
         headers=auth.auth_headers,
     )
     query = gql(executable.query)
     client = Client(transport=transport, fetch_schema_from_transport=True)
-    return client.execute(query, variable_values=executable.params)
+    response = client.execute(query, variable_values=executable.params)
+    return executable.parse_response(response)
