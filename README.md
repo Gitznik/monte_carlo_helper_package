@@ -1,45 +1,29 @@
 
 # Monte Carlo Monitor Helper
 
-This project aims to make setting [Monte Carlo](https://www.montecarlodata.com) field tracking monitors for entire Snowflake schemas easier and automatable.
+This project aims to make setting [Monte Carlo](https://www.montecarlodata.com) field tracking monitors for large numbers of tables with the same schema easier and automatable.
 
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
+
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ## Documentation
 
-The default behavior of this project is setup to work with a snowflake database. You can write your own version of the database_connection class to work for your database.
+This package was tested with Monte Carlo connected to a Snowflake DWH. It was not tested for other warehouses.
 
 For using this project you need:
 
-* A database you want to enable field health tracking for
-    * A JDBC/ODBC user with read access to the information schema of the database
-    * One or more specific schemas you want to enable field health tracking for
 * [Monte Carlo](ttps://www.montecarlodata.com)
+* A list of tables with the same time column name, you want to enable field health tracking for.
 ## Features
 
-- Set field health tracking automatically for all tables in a schema, if they are not yet monitored
-- Only set tracking for pre defined time fields
-- Set trackig for tables without time fields
-
+- Set field health tracking automatically for all tables provided
+- Only set tracking for a pre-defined time field
+- Update monitors if they already exist if the respective flag is set, see `example_usage.py`.
   
 ## Installation
 
-Install the dependencies with `pip3 install -r requirements.txt` from the project directory.
-
-You need to set up a file called `database_secrets.yaml` in the `./utility/config` directory. You can find a blueprint for this file based on the snowflake connection in the same directory. 
-
-In the `./utility/config` directory you can also find a `mc_monitor_config` file, where you can specify the time fields you want to monitor on (prioritized top to bottom), and the schemas to monitor on.
-## Environment Variables
-
-To run this project, you will need to add the following environment variables to your environment
-
-`SNOWFLAKE_PW` if you're using the provided snowflake connection
-
-`X_MCD_ID` for the monte carlo API
-
-`X_MCD_TOKEN` for the monte carlo API
+Install this package from PyPi using Pip.
 
 ## Usage
 
-```bash
-python3 main.py
-```h
+See `example_usage.py`
