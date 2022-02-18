@@ -1,5 +1,6 @@
 import os
 from dataclasses import dataclass
+from typing import Dict
 
 
 @dataclass
@@ -8,7 +9,7 @@ class MonteCarloAuth:
     x_mcd_token: str
 
     @property
-    def auth_headers(self) -> dict[str, str]:
+    def auth_headers(self) -> Dict[str, str]:
         return {"x-mcd-id": self.x_mcd_id, "x-mcd-token": self.x_mcd_token}
 
 

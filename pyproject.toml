@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mc_monitor_helper_package"
-version = "0.1.0"
+version = "0.1.1"
 description = "Utility package for setting and updating monte carlo monitors"
 license = "GPL-3.0-or-later"
 authors = ["Gitznik <r.offner@gmx.de>"]
