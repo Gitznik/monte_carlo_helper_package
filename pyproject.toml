@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "mc_monitor_helper_package"
 version = "0.1.0"
-description = ""
+description = "Utility package for setting and updating monte carlo monitors"
 authors = ["Gitznik <r.offner@gmx.de>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.7"
 gql = "^2.0.0"
 
 [tool.poetry.dev-dependencies]
