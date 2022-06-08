@@ -1,6 +1,13 @@
 
 # Monte Carlo Monitor Helper
 
+# Deprecation note
+
+As Monte Carlo has released a potent wrapper around their API, I think this package is no longer needed. Please head to their package for implementing what this package does:
+https://pypi.org/project/pycarlo/
+
+# Description
+
 This project aims to make setting [Monte Carlo](https://www.montecarlodata.com) field tracking monitors for large numbers of tables with the same schema easier and automatable.
 
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
